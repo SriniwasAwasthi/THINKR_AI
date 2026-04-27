@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - THINKR AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <div class="glow-bg"></div>
+    <div class="container">
+        <header>
+            <h1 class="logo"><a href="index.html" style="color: inherit; text-decoration: none;">THINKR <span class="accent">AI</span></a></h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="study-plan.html">Study Plan</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="profile-header">
+                        <div class="profile-avatar" id="profileAvatar">U</div>
+                        <div>
+                            <h2 id="profileName">Loading...</h2>
+                            <p id="profileEmail" style="color: #a3a3a3; font-size: 0.9rem;"></p>
+                            <p style="color: #6366f1; font-size: 0.8rem; margin-top: 0.3rem;">Free Tier</p>
+                        </div>
+                    </div>
+                    <div style="margin-top: 2rem;">
+                        <h3 style="margin-bottom: 1rem;">Stats</h3>
+                        <p style="margin-bottom: 0.5rem;"><strong>Member Since:</strong> <span id="profileJoined">—</span></p>
+                        <p style="margin-bottom: 0.5rem;"><strong>Plans Generated:</strong> <span id="profilePlansCount">0</span></p>
+                        <p style="margin-bottom: 0.5rem;"><strong>Current Streak:</strong> 1 Day 🔥</p>
+                    </div>
+                    <button onclick="logOut()" class="cta-button" style="width: 100%; margin-top: 2rem; background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.4); box-shadow: none; font-size: 0.9rem; padding: 0.7rem;">Log Out</button>
+                </div>
+                
+                <div class="card">
+                    <h2 style="margin-bottom: 0.5rem;">Active Study Plan</h2>
+                    <p style="color: #a3a3a3; margin-bottom: 1.5rem; font-size: 0.9rem;">Your most recently generated plan.</p>
+                    
+                    <div class="timeline" id="profileTimeline">
+                        <div style="text-align: center; color: #a3a3a3; padding: 2rem 0;">
+                            <p>No study plan yet.</p>
+                            <p style="font-size: 0.85rem; margin-top: 0.5rem;">Generate one to see it here!</p>
+                        </div>
+                    </div>
+
+                    <a href="study-plan.html"><button class="cta-button" style="margin-top: 2rem;">Create New Plan</button></a>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <p>&copy; 2026 THINKR AI. All rights reserved.</p>
+        </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../static/supabase-config.js"></script>
+    <script src="../static/script.js"></script>
+    <script>
+        // ✅ Load user from localStorage (set during signup)
+        const storedUser = localStorage.getItem('thinkr_user');
+        if (storedUser) {
+            const user = JSON.parse(storedUser);
+            document.getElementById('profileAvatar').textContent = user.avatar || 'U';
+            document.getElementById('profileName').textContent = user.name || 'User';
+            document.getElementById('profileEmail').textContent = user.email || '';
+            document.getElementById('profileJoined').textContent = user.joinedAt || '—';
+        } else {
+            document.getElementById('profileName').textContent = 'Guest User';
+            document.getElementById('profileEmail').textContent = 'Not signed in';
+        }
+
+        // ✅ Load saved study plans from localStorage
+        const savedPlans = localStorage.getItem('thinkr_last_plan');
+        if (savedPlans) {
+            const plan = JSON.parse(savedPlans);
+            const timeline = document.getElementById('profileTimeline');
+            const subjects = plan.subjects || [];
+
+            // Count plans
+            const planCount = parseInt(localStorage.getItem('thinkr_plan_count') || '0');
+            document.getElementById('profilePlansCount').textContent = planCount;
+
+            let html = '';
+            subjects.forEach((subject, index) => {
+                html += `
+                    <div class="timeline-item" style="animation-delay: ${index * 0.15}s">
+                        <div class="timeline-time">${subject.time || 'Scheduled'}</div>
+                        <div class="timeline-content">
+                            <h4>${subject.name}</h4>
+                            <p style="color: #a3a3a3; font-size: 0.9rem; margin-top: 0.5rem;">Deep focus session — AI optimized pathway.</p>
+                        </div>
+                    </div>
+                `;
+            });
+            timeline.innerHTML = html || timeline.innerHTML;
+        }
+
+        function logOut() {
+            localStorage.removeItem('thinkr_user');
+            window.location.href = 'signup.html';
+        }
+    </script>
+    <!-- AI Agent Widget -->
+    <div id="ai-agent-widget" class="ai-agent-widget">
+        <div class="agent-chat-window" id="agentChatWindow">
+            <div class="agent-header">
+                <div class="agent-status-orb"></div>
+                <span>THINKR Core</span>
+                <button id="closeAgentBtn" class="close-btn">&times;</button>
+            </div>
+            <div class="agent-messages" id="agentMessages"></div>
+            <div class="agent-input-area">
+                <input type="text" id="agentInput" placeholder="Ask THINKR...">
+                <button id="agentSendBtn">Send</button>
+            </div>
+        </div>
+        <div class="agent-trigger" id="agentTrigger">
+            <div class="agent-trigger-orb"></div>
+        </div>
+    </div>
+</body>
+</html>

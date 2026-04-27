@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup - THINKR AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <div class="glow-bg"></div>
+    <div class="container">
+        <header>
+            <h1 class="logo"><a href="index.html" style="color: inherit; text-decoration: none;">THINKR <span class="accent">AI</span></a></h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="study-plan.html">Study Plan</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="signup.html">Sign Up</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <div class="form-container">
+                <h2 id="formTitle">Create Your Account</h2>
+                <form id="signupForm">
+                    <div class="form-group" id="nameGroup">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" required placeholder="john@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" id="signupBtn" class="cta-button" style="width: 100%; margin-top: 1rem;">Sign Up</button>
+                    <div id="signupError" style="color: #ef4444; margin-top: 1rem; text-align: center; display: none;"></div>
+                    <div id="signupSuccess" style="color: #10b981; margin-top: 1rem; text-align: center; display: none;">Signup successful! Redirecting...</div>
+                    <div class="form-link" id="toggleModeContainer">
+                        <span id="toggleText">Already have an account?</span> <a href="#" id="toggleModeBtn">Log In</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+        <footer>
+            <p>&copy; 2026 THINKR AI. All rights reserved.</p>
+        </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../static/supabase-config.js"></script>
+    <script src="../static/script.js"></script>
+    <script>
+        let isLoginMode = false;
+        
+        document.getElementById('toggleModeBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            isLoginMode = !isLoginMode;
+            
+            const title = document.getElementById('formTitle');
+            const btn = document.getElementById('signupBtn');
+            const nameGroup = document.getElementById('nameGroup');
+            const toggleText = document.getElementById('toggleText');
+            const toggleModeBtn = document.getElementById('toggleModeBtn');
+            
+            if (isLoginMode) {
+                title.textContent = 'Welcome Back';
+                btn.textContent = 'Log In';
+                nameGroup.style.display = 'none';
+                document.getElementById('name').removeAttribute('required');
+                toggleText.textContent = 'Need an account?';
+                toggleModeBtn.textContent = 'Sign Up';
+            } else {
+                title.textContent = 'Create Your Account';
+                btn.textContent = 'Sign Up';
+                nameGroup.style.display = 'block';
+                document.getElementById('name').setAttribute('required', 'true');
+                toggleText.textContent = 'Already have an account?';
+                toggleModeBtn.textContent = 'Log In';
+            }
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('signupBtn');
+            const errorDiv = document.getElementById('signupError');
+            const successDiv = document.getElementById('signupSuccess');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const fullName = document.getElementById('name').value;
+
+            btn.textContent = isLoginMode ? 'Logging in...' : 'Signing up...';
+            btn.disabled = true;
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
+            let authResponse;
+            
+            if (isLoginMode) {
+                authResponse = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+            } else {
+                authResponse = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            full_name: fullName
+                        }
+                    }
+                });
+            }
+            
+            const { data, error } = authResponse;
+
+            if (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.style.display = 'block';
+                btn.textContent = isLoginMode ? 'Log In' : 'Sign Up';
+                btn.disabled = false;
+                console.error('Auth error:', error);
+            } else {
+                // ✅ Store user in localStorage for profile page
+                let userName = isLoginMode ? (data.user?.user_metadata?.full_name || 'User') : fullName;
+                const userData = {
+                    name: userName,
+                    email: email,
+                    avatar: userName.charAt(0).toUpperCase(),
+                    joinedAt: new Date().toLocaleDateString()
+                };
+                localStorage.setItem('thinkr_user', JSON.stringify(userData));
+                console.log(isLoginMode ? 'User logged in:' : 'User signed up:', userData);
+
+                successDiv.textContent = isLoginMode ? 'Login successful! Redirecting...' : 'Signup successful! Redirecting...';
+                successDiv.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = 'profile.html';
+                }, 2000);
+            }
+        });
+    </script>
+    <!-- AI Agent Widget -->
+    <div id="ai-agent-widget" class="ai-agent-widget">
+        <div class="agent-chat-window" id="agentChatWindow">
+            <div class="agent-header">
+                <div class="agent-status-orb"></div>
+                <span>THINKR Core</span>
+                <button id="closeAgentBtn" class="close-btn">&times;</button>
+            </div>
+            <div class="agent-messages" id="agentMessages"></div>
+            <div class="agent-input-area">
+                <input type="text" id="agentInput" placeholder="Ask THINKR...">
+                <button id="agentSendBtn">Send</button>
+            </div>
+        </div>
+        <div class="agent-trigger" id="agentTrigger">
+            <div class="agent-trigger-orb"></div>
+        </div>
+    </div>
+</body>
+</html>
