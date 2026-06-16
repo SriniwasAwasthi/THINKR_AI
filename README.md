@@ -1,7 +1,5 @@
 # 🧠 THINKR AI — The Future of Intelligence
 
-Ever get overwhelmed trying to study? 🤯 THINKR AI is like having a super-smart study buddy! Just tell it what you need to learn and how much time you have. It instantly builds a perfect, step-by-step daily schedule with built-in breaks to help your brain rest. Plus, there’s an active AI chat helper ready to guide you anytime! 🚀🧠
-
 Welcome to **THINKR AI**! ⚡ A next-generation, premium AI-powered study assistant and intelligence platform designed to optimize your cognitive workflows. THINKR AI solves the problem of unstructured learning by transforming simple lists of subjects and time parameters into structured, time-blocked schedules, paired with a context-aware chat assistant that supports your learning journey in real-time.
 
 ---
