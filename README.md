@@ -18,7 +18,6 @@ Welcome to **THINKR AI**! ⚡ A next-generation, premium AI-powered study assist
 * [🛡️ Security Notes](#%EF%B8%8F-security-notes)
 * [🔮 Future Enhancements](#-future-enhancements)
 * [🤝 Contributing](#-contributing)
-* [📄 License](#-license)
 * [💖 Thank You](#-thank-you)
 
 ---
@@ -178,11 +177,6 @@ Feedback, issues, and contributions are always welcome!
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
 4. Push to the branch (`git push origin feature/AmazingFeature`).
 5. Open a Pull Request.
-
----
-
-## 📄 License
-License not specified.
 
 ---
 
